@@ -1,22 +1,27 @@
-# LinkedIn Post (Validation Set & Model Evaluation)
+# LinkedIn Post — Validation Set EDA Dashboard
 
 ---
 
-🔬 **Don't Let Spatial Leakage Ruin Your AI Models** 🗺️
+🔬 **Validation Data Deserves Its Own Story: Why I Built a Separate EDA for the Hold-Out Set**
 
-In geospatial data science, randomly splitting your data into train and test sets is a recipe for disaster. Spatial autocorrelation means points close together are too similar—leading to overly optimistic model evaluations (data leakage).
+A common mistake in geospatial machine learning: train on 259 samples, throw 100 into a hold-out bin, and never look at the validation data until evaluation day.
 
-For the **Swiss Jura heavy metals dataset**, I deliberately enforced a strict spatial split, isolating a pure **Validation Set (n=100)** completely independent from my 259-sample training set.
+That's a risk. The validation set can be statistically misrepresentative in ways that inflate or deflate your reported performance.
 
-But evaluating spatial models isn't just about outputting an RMSE score. You need to understand the test data *visually*. So, I built a secondary, fully interactive **Validation EDA Dashboard**!
+For my **Swiss Jura Heavy Metals** project, I built a dedicated **Validation Set EDA Dashboard** — a standalone interactive analysis for the strict 100-sample hold-out, mirroring the structure of the prediction EDA so I could compare them side-by-side.
 
-Here is how I use this validation dashboard to ensure model robustness:
-✅ **Distribution Checking**: Comparing the histograms of the 100 validation samples against the training data to ensure we aren’t testing out-of-distribution extremes blindly.
-✅ **Spatial Mapping**: Visually verifying that the 100 "hold-out" sample locations are well distributed across the geological rock types and aren't entirely clustered in one region.
-✅ **Categorical Generalization**: Confirming that the baseline heavy metal concentrations (like Copper and Lead) across different land uses hold up in this unseen subset.
+Here's what the split-EDA approach revealed:
 
-Creating a dedicated dashboard just for your test set might sound like overkill—but when building autonomous **Geospatial AI Agents**, having a visual ground-truth to compare your agent's predictions against is invaluable.
+📊 **Comparable distributions** — Histogram shapes for Cd, Cu, and Pb matched well; no catastrophic distributional shift. 
 
-How do you handle train/test splitting and evaluation on spatial datasets? Let me know below! 👇
+🪨 **Geological balance** — With rock types displayed **youngest → oldest** (Quaternary · Portlandian · Kimmeridgian · Sequanian · Argovian), I could immediately confirm the holdout preserves proportional coverage of all formation ages — no silent bias toward the youngest surficial deposits.
 
-#GeoAI #SpatialAnalysis #MachineLearning #DataScience #DataLeakage #AIResearch #Geochemistry #Python #Evaluation
+🔗 **Preserved correlations** — The Co-Cr-Ni correlation triad holds in the validation set, lending confidence that the training signal will generalise.
+
+📉 **One flag** — Zn mean in the validation set is ~8% lower than training. Worth noting as a potential systematic offset when interpreting residuals from any interpolation algorithm.
+
+This validation EDA feeds directly into the live geographic map dashboard — where I can filter validation points by rock type to visually audit spatial fairness.
+
+Are you running separate EDA on your validation sets before model evaluation? 👇
+
+#MachineLearning #DataScience #ModelValidation #Geochemistry #EDA #SpatialAnalysis #GeoAI #Python

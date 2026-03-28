@@ -4,7 +4,7 @@ from string import Template
 BASE = os.path.dirname(os.path.abspath(__file__))
 csv_path = os.path.join(BASE, "jura_validation_set.csv")
 
-ROCK = {1:"Argovian",2:"Kimmeridgian",3:"Sequanian",4:"Portlandian",5:"Quaternary"}
+ROCK = {5:"Quaternary",4:"Portlandian",2:"Kimmeridgian",3:"Sequanian",1:"Argovian"}
 LAND = {1:"Forest",2:"Pasture",3:"Meadow",4:"Tillage"}
 METALS = ["Cd","Cu","Pb","Co","Cr","Ni","Zn"]
 COLORS = ["#f72585","#7209b7","#3a0ca3","#4361ee","#4cc9f0","#06d6a0","#ffd166"]
@@ -117,8 +117,8 @@ footer{text-align:center;padding:24px;color:#444466;font-size:.78rem;border-top:
   </div>
   <div class="nav-group" style="display:flex;gap:12px;margin-left:auto;align-items:center">
     <div class="badge">n = $n_samples samples</div>
-    <a href="validation_maps.html" class="nav-btn">Spatial Maps &rarr;</a>
-    <a href="../Prediction set/index.html" class="nav-btn">&larr; Prediction Set</a>
+    <a href="../validation set map/index.html" class="nav-btn">Spatial Maps &rarr;</a>
+    <a href="../../Prediction set/prediction set EDA/index.html" class="nav-btn">&larr; Prediction Set</a>
   </div>
 </header>
 <main>
@@ -148,7 +148,7 @@ footer{text-align:center;padding:24px;color:#444466;font-size:.78rem;border-top:
 
 <div class="section-title">By Rock Type &amp; Land Use</div>
 <div class="grid-2">
-  <div class="card"><div class="card-title">Count by Rock Type</div><canvas id="rockCount"></canvas></div>
+  <div class="card"><div class="card-title">Count by Rock Type <span style="font-weight:400;color:#555588;font-size:.75rem;">(youngest &rarr; oldest)</span></div><canvas id="rockCount"></canvas></div>
   <div class="card"><div class="card-title">Count by Land Use</div><canvas id="landCount"></canvas></div>
 </div>
 <div class="grid-2" style="margin-top:24px">
@@ -285,10 +285,12 @@ new Chart(document.getElementById('landCount'),{type:'doughnut',
   options:dOpts});
 
 // Mean by category charts
+// Rock lookup by ID->name (static map, order-independent)
+var ROCK_ID_MAP = {1:'Argovian',2:'Kimmeridgian',3:'Sequanian',4:'Portlandian',5:'Quaternary'};
 function buildRockMetal(){
   var m=document.getElementById('rockMetal').value, idx=METALS.indexOf(m);
   var means=ROCK_LABELS.map(function(rk){
-    var vals=ROWS.filter(function(r){return ['Argovian','Kimmeridgian','Sequanian','Portlandian','Quaternary'][r.rock-1]===rk;}).map(function(r){return r[m];});
+    var vals=ROWS.filter(function(r){return ROCK_ID_MAP[r.rock]===rk;}).map(function(r){return r[m];});
     return vals.length?(vals.reduce(function(a,b){return a+b;},0)/vals.length).toFixed(3):0;
   });
   if(window._rmc) window._rmc.destroy();
